@@ -19,29 +19,6 @@ if orders_df is None or articles_df is None:
     st.stop()
 
 # =========================
-# Cards Sold by Set (Treemap)
-# =========================
-st.header("📦 Cards Sold by Set")
-
-# Group by set, count total cards
-treemap_data = articles_df.groupby('set_names').size().reset_index(name='count')
-
-fig = px.treemap(
-    treemap_data,
-    path=['set_names'],
-    values='count',
-    title='Cards Sold per Set'
-)
-
-fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
-fig.update_traces(
-    textposition="middle center",
-    textfont_size=14
-)
-
-st.plotly_chart(fig, use_container_width=True)
-
-# =========================
 # Orders by Country (Map)
 # =========================
 st.markdown("---")
@@ -135,20 +112,3 @@ fig_cumulative.update_layout(
 )
 
 st.plotly_chart(fig_cumulative, use_container_width=True)
-
-# =========================
-# Quick Stats
-# =========================
-st.markdown("---")
-st.header("📊 Quick Stats")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.metric("Total Unique Cards Sold", len(articles_df))
-
-with col2:
-    st.metric("Total Unique Sets", articles_df['set_names'].nunique())
-
-with col3:
-    st.metric("Countries Served", orders_df['Country'].nunique())
