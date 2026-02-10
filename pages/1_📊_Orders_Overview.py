@@ -11,6 +11,8 @@ st.set_page_config(
 
 st.title("📊 Orders Overview")
 
+st.markdown("### Link to store: [ExCardin's Cardmarket Store](https://www.cardmarket.com/en/Magic/Users/ExCardin)")
+
 # Load data from S3
 df = load_orders_data()
 
