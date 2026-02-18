@@ -45,25 +45,65 @@ st.markdown("### Articles Sold by Rarity")
 rarity_counts = df['card_rarities'].value_counts()
 st.bar_chart(rarity_counts)
 
-# Cards Sold by Set (Treemap)
+
+# ===============================
+# 🌳 Cards Sold by Set (Count)
+# ===============================
 st.markdown("---")
 st.title("🌳 Cards Sold by Set")
 
-# Group by set only, count total cards
 treemap_data = df.groupby('set_names').size().reset_index(name='count')
 
-# Create treemap with just sets
 fig = px.treemap(
     treemap_data,
-    path=['set_names'],  # Only set level, no card names
+    path=['set_names'],
     values='count',
+    color='count',
+    color_continuous_scale='Viridis_r',  # 👈 reversed gradient
     title='Cards Sold per Set'
 )
 
-fig.update_layout(margin=dict(t=50, l=25, r=25, b=25))
+fig.update_layout(
+    margin=dict(t=50, l=25, r=25, b=25),
+    coloraxis_colorbar_title='Cards Sold'
+)
+
 fig.update_traces(
     textposition="middle center",
     textfont_size=14
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+
+# =====================================
+# 🌳 Total Value of Cards Sold per Set
+# =====================================
+
+treemap_data = (
+    df.groupby('set_names')['card_prices']
+      .sum()
+      .reset_index(name='total_value')
+)
+
+fig = px.treemap(
+    treemap_data,
+    path=['set_names'],
+    values='total_value',
+    color='total_value',
+    color_continuous_scale='Viridis_r',  # 👈 reversed gradient
+    title='Total Value of Cards Sold per Set'
+)
+
+fig.update_layout(
+    margin=dict(t=50, l=25, r=25, b=25),
+    coloraxis_colorbar_title='Total Value (EUR)'
+)
+
+fig.update_traces(
+    textposition="middle center",
+    textfont_size=14,
+    hovertemplate='<b>%{label}</b><br>Total Value: €%{value:,.2f}<extra></extra>'
 )
 
 st.plotly_chart(fig, use_container_width=True)
