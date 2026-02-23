@@ -52,58 +52,67 @@ st.bar_chart(rarity_counts)
 st.markdown("---")
 st.title("🌳 Cards Sold by Set")
 
-treemap_data = df.groupby('set_names').size().reset_index(name='count')
+treemap_count = df.groupby('set_names').size().reset_index(name='count')
 
-fig = px.treemap(
-    treemap_data,
-    path=['set_names'],
-    values='count',
-    color='count',
-    color_continuous_scale='Viridis_r',  # 👈 reversed gradient
-    title='Cards Sold per Set'
-)
-
-fig.update_layout(
-    margin=dict(t=50, l=25, r=25, b=25),
-    coloraxis_colorbar_title='Cards Sold'
-)
-
-fig.update_traces(
+fig1 = go.Figure(go.Treemap(
+    labels=treemap_count['set_names'],
+    parents=[''] * len(treemap_count),
+    values=treemap_count['count'],
+    marker=dict(
+        colors=treemap_count['count'],
+        colorscale='Viridis_r',
+        showscale=True,
+        colorbar=dict(
+            title='Cards Sold',
+            thickness=15,       # 👈 same thickness for both
+            len=0.95,           # 👈 same length for both
+        )
+    ),
     textposition="middle center",
-    textfont_size=14
+    textfont=dict(size=14),
+    hovertemplate='<b>%{label}</b><br>Cards Sold: %{value}<extra></extra>',
+))
+
+fig1.update_layout(
+    title='Cards Sold per Set',
+    margin=dict(t=50, l=0, r=0, b=0),  # 👈 remove all padding
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig1, use_container_width=True)
 
 
 # =====================================
 # 🌳 Total Value of Cards Sold per Set
 # =====================================
 
-treemap_data = (
+treemap_value = (
     df.groupby('set_names')['card_prices']
       .sum()
       .reset_index(name='total_value')
 )
 
-fig = px.treemap(
-    treemap_data,
-    path=['set_names'],
-    values='total_value',
-    color='total_value',
-    color_continuous_scale='Viridis_r',  # 👈 reversed gradient
-    title='Total Value of Cards Sold per Set'
-)
-
-fig.update_layout(
-    margin=dict(t=50, l=25, r=25, b=25),
-    coloraxis_colorbar_title='Total Value (EUR)'
-)
-
-fig.update_traces(
+fig2 = go.Figure(go.Treemap(
+    labels=treemap_value['set_names'],
+    parents=[''] * len(treemap_value),
+    values=treemap_value['total_value'],
+    marker=dict(
+        colors=treemap_value['total_value'],
+        colorscale='Viridis_r',
+        showscale=True,
+        colorbar=dict(
+            title='Total Value (EUR)',
+            thickness=15,       # 👈 same thickness for both
+            len=0.95,           # 👈 same length for both
+        )
+    ),
     textposition="middle center",
-    textfont_size=14,
-    hovertemplate='<b>%{label}</b><br>Total Value: €%{value:,.2f}<extra></extra>'
+    textfont=dict(size=14),
+    hovertemplate='<b>%{label}</b><br>Total Value: €%{value:,.2f}<extra></extra>',
+))
+
+fig2.update_layout(
+    title='Total Value of Cards Sold per Set',
+    margin=dict(t=50, l=0, r=0, b=0),  # 👈 remove all padding
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig2, use_container_width=True)

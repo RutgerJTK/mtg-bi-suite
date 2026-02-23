@@ -12,7 +12,7 @@ PUBLIC_BASE_URL = f"https://{BUCKET_NAME}.s3.eu-central-1.amazonaws.com"
 # File paths
 ORDERS_CSV_URL = f"{PUBLIC_BASE_URL}/public/exports/cardmarket_orders_data.csv"
 ARTICLES_CSV_URL = f"{PUBLIC_BASE_URL}/public/exports/cardmarket_articles_sold.csv"
-
+EXPENSES_ODS_URL = f"{PUBLIC_BASE_URL}/raw/monthly_expenses/Expenses.ods"
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_orders_data():
@@ -62,6 +62,28 @@ def load_articles_data():
     except Exception as e:
         st.error(f"Error loading articles data: {str(e)}")
         st.error(f"Tried to load from: {ARTICLES_CSV_URL}")
+        return None
+
+
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def load_expenses_data():
+    """
+    Load monthly expenses data from S3 (ODS format)
+    Returns: pandas DataFrame
+    """
+    try:
+        df = pd.read_excel(EXPENSES_ODS_URL, engine='odf')
+        
+        # Convert Order_Date to datetime
+        df['Order_Date'] = pd.to_datetime(df['Order_Date'])
+        
+        # Sort by date
+        df = df.sort_values('Order_Date')
+        
+        return df
+    except Exception as e:
+        st.error(f"Error loading expenses data: {str(e)}")
+        st.error(f"Tried to load from: {EXPENSES_ODS_URL}")
         return None
 
 
